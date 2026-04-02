@@ -7,7 +7,6 @@
 <style>
   :root {
     --bg: #0b1220;
-    --panel: #111a2e;
     --panel2: #0d1627;
     --border: #22314f;
     --text: #e7eefc;
@@ -27,9 +26,29 @@
     color: var(--text);
     padding: 20px;
   }
-  h1 { margin: 0; }
-  p { margin: 0 0 16px; color: var(--muted); }
+  body.locked { overflow: hidden; }
+  h1, h2, h3, h4, p { margin: 0; }
+  p { color: var(--muted); }
   .app-shell { max-width: 1600px; margin: 0 auto; }
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .ukg-badge {
+    width: 90px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 26px;
+    color: #d9ff00;
+    background: linear-gradient(135deg,#0b5d4f 50%,#0a4a40 50%);
+    border-radius: 6px;
+  }
   .topbar {
     display: flex;
     align-items: center;
@@ -50,6 +69,7 @@
   .tab-btn.active.tab-json { background: linear-gradient(180deg, rgba(124,156,255,.28), rgba(124,156,255,.12)); }
   .tab-btn.active.tab-xml { background: linear-gradient(180deg, rgba(86,214,163,.28), rgba(86,214,163,.12)); }
   .tab-btn.active.tab-url { background: linear-gradient(180deg, rgba(255,206,106,.30), rgba(255,206,106,.12)); }
+  .status { margin-left: auto; color: var(--good); font-size: 12px; }
   .panel { display: none; }
   .panel.active { display: block; }
   .toolbar {
@@ -71,7 +91,6 @@
   button.primary { background: linear-gradient(180deg, rgba(124,156,255,.25), rgba(124,156,255,.12)); }
   button.good { background: linear-gradient(180deg, rgba(86,214,163,.23), rgba(86,214,163,.10)); }
   button.danger { background: linear-gradient(180deg, rgba(255,123,123,.20), rgba(255,123,123,.08)); }
-  .status { margin-left: auto; color: var(--good); font-size: 12px; }
   .container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
   .card {
     background: rgba(17,26,46,0.92);
@@ -81,7 +100,6 @@
     box-shadow: 0 10px 30px rgba(0,0,0,.25);
   }
   .card h3 {
-    margin: 0;
     padding: 14px 16px;
     font-size: 15px;
     border-bottom: 1px solid var(--border);
@@ -125,7 +143,7 @@
     padding: 12px;
     margin-top: 10px;
   }
-  .box h4 { margin: 0 0 8px; font-size: 13px; color: var(--text); }
+  .box h4 { margin-bottom: 8px; font-size: 13px; }
   .list {
     margin: 0;
     padding-left: 18px;
@@ -158,31 +176,54 @@
     user-select: none;
   }
   input[type="checkbox"] { transform: scale(1.1); }
-  .header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 10px;
-  }
-  .ukg-badge {
-    width: 90px;
-    height: 90px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 26px;
-    color: #d9ff00;
-    background: linear-gradient(135deg,#0b5d4f 50%,#0a4a40 50%);
-    border-radius: 6px;
-  }
   .url-input-row {
     display: grid;
     grid-template-columns: 1fr auto;
     gap: 10px;
     align-items: center;
   }
+  .login-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 9, 20, 0.92);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+  }
+  .login-card {
+    width: min(420px, 100%);
+    background: rgba(17,26,46,0.98);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 16px 50px rgba(0,0,0,.45);
+  }
+  .login-card h2 { font-size: 22px; margin-bottom: 8px; }
+  .login-card p { margin-bottom: 14px; }
+  .login-card input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--panel2);
+    color: var(--text);
+    outline: none;
+    margin-bottom: 12px;
+  }
+  .login-card input:focus {
+    border-color: var(--accent3);
+    box-shadow: 0 0 0 3px rgba(255,206,106,.12);
+  }
+  .login-error {
+    min-height: 18px;
+    color: var(--bad);
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+  .hidden { display: none !important; }
   @media (max-width: 1200px) {
     .container { grid-template-columns: 1fr; }
     textarea { height: 380px; }
@@ -192,8 +233,18 @@
   }
 </style>
 </head>
-<body>
-  <div class="app-shell">
+<body class="locked">
+  <div id="loginOverlay" class="login-overlay">
+    <div class="login-card">
+      <h2>Login</h2>
+      <p>Enter the access password to open the tool.</p>
+      <input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password" />
+      <div id="loginError" class="login-error"></div>
+      <button class="action primary" id="btnLogin">Enter</button>
+    </div>
+  </div>
+
+  <div class="app-shell hidden" id="appShell">
     <div class="header-row">
       <h1>Developer Aashish Kumar</h1>
       <div class="ukg-badge">UKG</div>
@@ -322,11 +373,11 @@
             <div class="box" style="margin-top:0;">
               <h4>Proxy endpoint</h4>
               <div class="url-input-row">
-                <input id="proxyEndpointInput" type="text" value="/.netlify/functions/fetch-metadata?url=" />
+                <input id="proxyEndpointInput" type="text" value="https://YOUR-RENDER-URL.onrender.com/fetch-metadata?url=" />
                 <button class="action" id="btnUseProxyDefault">Reset</button>
               </div>
             </div>
-            <div class="note">This tab uses a same-origin proxy endpoint, so the browser does not hit CORS directly. Add a Netlify Function at <b>/.netlify/functions/fetch-metadata</b> to make remote metadata fetch work.</div>
+            <div class="note">This tab uses a same-origin proxy endpoint, so the browser does not hit CORS directly. Uses a Render backend proxy. Update the URL above with your Render service endpoint.</div>
           </div>
         </div>
         <div class="card url-card">
@@ -352,68 +403,77 @@
   </div>
 
 <script>
+  const APP_PASSWORD = 'UKG2026';
+  const AUTH_KEY = 'json_xml_tool_auth_ok';
+
   const labelToKey = {
-    "Customer Name": "companyName",
-    "Tenant Name": "tenantName",
-    "Tenant Short Name": "tenantShortName",
-    "Vanity URL": "vanityURL",
-    "Source Tenant": "sourceTenant",
-    "Oauth ID/Client ID": "oAuthClientId",
-    "Oauth Secret": "oAuthClientSecret",
-    "SFTP Username Internal - 1": "sftpUsernameInternal",
-    "SFTP Password Internal - 1": "sftpPasswordInternal",
-    "SFTP Username External - 1": "sftpUsernameExternal",
-    "SFTP Password External - 1": "sftpPasswordExternal",
-    "SFTP Vanity URL": "sftpVanityURL",
-    "SSO Vanity URL": "relayStateURL",
-    "SSO Metadata URL": "webMetadataURL"
+    'Customer Name': 'companyName',
+    'Tenant Name': 'tenantName',
+    'Tenant Short Name': 'tenantShortName',
+    'Vanity URL': 'vanityURL',
+    'Source Tenant': 'sourceTenant',
+    'Oauth ID/Client ID': 'oAuthClientId',
+    'Oauth Secret': 'oAuthClientSecret',
+    'SFTP Username Internal - 1': 'sftpUsernameInternal',
+    'SFTP Password Internal - 1': 'sftpPasswordInternal',
+    'SFTP Username External - 1': 'sftpUsernameExternal',
+    'SFTP Password External - 1': 'sftpPasswordExternal',
+    'SFTP Vanity URL': 'sftpVanityURL',
+    'SSO Vanity URL': 'relayStateURL',
+    'SSO Metadata URL': 'webMetadataURL'
   };
 
   const defaults = {
-    sourceTenant: "r9-b1-mv-rollout-2",
-    serviceAccountUser: "UKGTimeAdmin",
-    sftpVanityURL: "sftp.cfn02.cfn.mykronos.com"
+    sourceTenant: 'r9-b1-mv-rollout-2',
+    serviceAccountUser: 'UKGTimeAdmin',
+    sftpVanityURL: 'sftp.cfn02.cfn.mykronos.com'
   };
 
-  const status = document.getElementById('status');
-  const tabs = document.querySelectorAll('.tab-btn');
-  const panels = document.querySelectorAll('.panel');
-
-  const jsonInput = document.getElementById('jsonInput');
-  const detailsInput = document.getElementById('detailsInput');
-  const output = document.getElementById('output');
-  const warningsEl = document.getElementById('warnings');
-  const statsEl = document.getElementById('stats');
-  const keepCompanySameAsTenant = document.getElementById('keepCompanySameAsTenant');
-
-  const xmlInput = document.getElementById('xmlInput');
-  const xmlOutput = document.getElementById('xmlOutput');
-  const xmlWarnings = document.getElementById('xmlWarnings');
-  const xmlStats = document.getElementById('xmlStats');
-
-  const metadataUrlInput = document.getElementById('metadataUrlInput');
-  const proxyEndpointInput = document.getElementById('proxyEndpointInput');
-  const urlXmlOutput = document.getElementById('urlXmlOutput');
-  const urlWarnings = document.getElementById('urlWarnings');
-  const urlStats = document.getElementById('urlStats');
+  const els = {
+    status: document.getElementById('status'),
+    tabs: document.querySelectorAll('.tab-btn'),
+    panels: document.querySelectorAll('.panel'),
+    appShell: document.getElementById('appShell'),
+    loginOverlay: document.getElementById('loginOverlay'),
+    loginPassword: document.getElementById('loginPassword'),
+    loginError: document.getElementById('loginError'),
+    jsonInput: document.getElementById('jsonInput'),
+    detailsInput: document.getElementById('detailsInput'),
+    output: document.getElementById('output'),
+    warnings: document.getElementById('warnings'),
+    stats: document.getElementById('stats'),
+    keepCompanySameAsTenant: document.getElementById('keepCompanySameAsTenant'),
+    xmlInput: document.getElementById('xmlInput'),
+    xmlOutput: document.getElementById('xmlOutput'),
+    xmlWarnings: document.getElementById('xmlWarnings'),
+    xmlStats: document.getElementById('xmlStats'),
+    metadataUrlInput: document.getElementById('metadataUrlInput'),
+    proxyEndpointInput: document.getElementById('proxyEndpointInput'),
+    urlXmlOutput: document.getElementById('urlXmlOutput'),
+    urlWarnings: document.getElementById('urlWarnings'),
+    urlStats: document.getElementById('urlStats')
+  };
 
   function setStatus(text) {
-    status.textContent = text;
+    els.status.textContent = text;
     clearTimeout(window.__statusTimer);
-    window.__statusTimer = setTimeout(() => status.textContent = 'Ready', 1600);
+    window.__statusTimer = setTimeout(() => {
+      els.status.textContent = 'Ready';
+    }, 1600);
   }
 
   function switchTab(tabId) {
-    tabs.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
-    panels.forEach(panel => panel.classList.toggle('active', panel.id === tabId));
+    els.tabs.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
+    els.panels.forEach(panel => panel.classList.toggle('active', panel.id === tabId));
   }
 
-  tabs.forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+  els.tabs.forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
 
   function parseDetails(text) {
     const result = {};
     const unknown = [];
     const malformed = [];
+
     text.split(/\r?\n/).forEach((line, idx) => {
       const trimmed = line.trim();
       if (!trimmed) return;
@@ -431,13 +491,14 @@
       }
       result[key] = value;
     });
+
     return { result, unknown, malformed };
   }
 
   function fillMissingRules(data) {
     const out = { ...data };
     out.integrationName = '';
-    if (keepCompanySameAsTenant.checked) {
+    if (els.keepCompanySameAsTenant.checked) {
       out.companyName = out.tenantName || out.companyName || '';
     }
     if (out.vanityURL) {
@@ -459,16 +520,14 @@
   }
 
   function renderWarnings(info, templateKeys, merged) {
-    warningsEl.innerHTML = '';
-    statsEl.innerHTML = '';
     const missing = templateKeys.filter(k => merged[k] === undefined || merged[k] === null || merged[k] === '');
     const items = [];
     info.malformed.forEach(item => items.push(`<li class="bad">Line ${item.line}: invalid format (use Label,Value) → ${escapeHtml(item.text)}</li>`));
     info.unknown.forEach(item => items.push(`<li class="warn">Line ${item.line}: unknown label ignored → ${escapeHtml(item.label)}</li>`));
     missing.forEach(key => items.push(`<li class="warn">Missing value for template field → ${escapeHtml(key)}</li>`));
     if (!items.length) items.push('<li class="good">No warnings. Mapping looks good.</li>');
-    warningsEl.innerHTML = items.join('');
-    statsEl.innerHTML = `
+    els.warnings.innerHTML = items.join('');
+    els.stats.innerHTML = `
       <span class="pill good">Mapped: ${Object.keys(info.result).length}</span>
       <span class="pill warn">Unknown labels: ${info.unknown.length}</span>
       <span class="pill bad">Malformed lines: ${info.malformed.length}</span>
@@ -478,36 +537,36 @@
 
   function fillJSON() {
     try {
-      const template = JSON.parse(jsonInput.value);
+      const template = JSON.parse(els.jsonInput.value);
       const templateKeys = Object.keys(template);
-      const parsed = parseDetails(detailsInput.value);
+      const parsed = parseDetails(els.detailsInput.value);
       const merged = fillMissingRules(parsed.result);
       templateKeys.forEach(key => {
         if (Object.prototype.hasOwnProperty.call(merged, key)) template[key] = merged[key];
       });
-      output.value = JSON.stringify(template, null, 2);
+      els.output.value = JSON.stringify(template, null, 2);
       renderWarnings(parsed, templateKeys, merged);
       setStatus('Filled');
-    } catch (e) {
-      warningsEl.innerHTML = '<li class="bad">Invalid JSON template. Please check braces/quotes.</li>';
-      statsEl.innerHTML = '';
+    } catch (error) {
+      els.warnings.innerHTML = '<li class="bad">Invalid JSON template. Please check braces/quotes.</li>';
+      els.stats.innerHTML = '';
       alert('Invalid JSON template or details format.');
     }
   }
 
-  async function copyOutput() {
+  async function copyText(textarea, okText) {
     try {
-      await navigator.clipboard.writeText(output.value || '');
-      setStatus('Copied');
+      await navigator.clipboard.writeText(textarea.value || '');
+      setStatus(okText);
     } catch (e) {
-      output.select();
+      textarea.select();
       document.execCommand('copy');
-      setStatus('Copied');
+      setStatus(okText);
     }
   }
 
   function resetJSON() {
-    jsonInput.value = `{
+    els.jsonInput.value = `{
   "integrationName":"",
   "companyName":"",
   "tenantName":"",
@@ -531,17 +590,17 @@
   "mobileSSORelayStateURL":"",
   "mobileSSOMetadataURL":""
 }`;
-    detailsInput.value = '';
-    output.value = '';
-    warningsEl.innerHTML = '';
-    statsEl.innerHTML = '';
+    els.detailsInput.value = '';
+    els.output.value = '';
+    els.warnings.innerHTML = '';
+    els.stats.innerHTML = '';
     setStatus('Reset');
   }
 
   document.getElementById('btnFill').addEventListener('click', fillJSON);
-  document.getElementById('btnCopy').addEventListener('click', copyOutput);
+  document.getElementById('btnCopy').addEventListener('click', () => copyText(els.output, 'Copied'));
   document.getElementById('btnReset').addEventListener('click', resetJSON);
-  keepCompanySameAsTenant.addEventListener('change', fillJSON);
+  els.keepCompanySameAsTenant.addEventListener('change', fillJSON);
 
   function parseXmlToIndentedString(xmlText) {
     const parser = new DOMParser();
@@ -549,9 +608,7 @@
     const errorNode = doc.getElementsByTagName('parsererror')[0];
     if (errorNode) return { ok: false, error: errorNode.textContent || 'Invalid XML' };
 
-    function escapeText(text) {
-      return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
+    const escapeText = (text) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     function formatNode(node, indent) {
       const pad = '  '.repeat(indent);
@@ -567,60 +624,56 @@
           const childText = children.map(child => formatNode(child, indent + 1)).join('\n');
           return `${pad}${openTag}\n${childText}\n${pad}</${node.nodeName}>`;
         }
-        case Node.TEXT_NODE: return `${pad}${escapeText(node.textContent.trim())}`;
-        case Node.CDATA_SECTION_NODE: return `${pad}<![CDATA[${node.nodeValue}]]>`;
-        case Node.COMMENT_NODE: return `${pad}<!--${node.nodeValue}-->`;
-        default: return '';
+        case Node.TEXT_NODE:
+          return `${pad}${escapeText(node.textContent.trim())}`;
+        case Node.CDATA_SECTION_NODE:
+          return `${pad}<![CDATA[${node.nodeValue}]]>`;
+        case Node.COMMENT_NODE:
+          return `${pad}<!--${node.nodeValue}-->`;
+        default:
+          return '';
       }
     }
 
-    const root = doc.documentElement;
-    return { ok: true, value: `<?xml version="1.0" encoding="UTF-8"?>\n${formatNode(root, 0)}` };
+    return { ok: true, value: `<?xml version="1.0" encoding="UTF-8"?>\n${formatNode(doc.documentElement, 0)}` };
   }
 
   function renderXmlWarnings(message, kind) {
-    xmlWarnings.innerHTML = `<li class="${kind}">${escapeHtml(message)}</li>`;
-    xmlStats.innerHTML = `<span class="pill ${kind}">${kind === 'good' ? 'Valid XML' : 'Invalid XML'}</span>`;
+    els.xmlWarnings.innerHTML = `<li class="${kind}">${escapeHtml(message)}</li>`;
+    els.xmlStats.innerHTML = `<span class="pill ${kind}">${kind === 'good' ? 'Valid XML' : 'Invalid XML'}</span>`;
   }
 
   function formatXml() {
-    const text = xmlInput.value.trim();
+    const text = els.xmlInput.value.trim();
     if (!text) {
-      xmlOutput.value = '';
-      xmlWarnings.innerHTML = '<li class="warn">Paste XML first.</li>';
-      xmlStats.innerHTML = '<span class="pill warn">Empty input</span>';
+      els.xmlOutput.value = '';
+      els.xmlWarnings.innerHTML = '<li class="warn">Paste XML first.</li>';
+      els.xmlStats.innerHTML = '<span class="pill warn">Empty input</span>';
       setStatus('XML empty');
       return;
     }
     const result = parseXmlToIndentedString(text);
     if (!result.ok) {
-      xmlOutput.value = '';
+      els.xmlOutput.value = '';
       renderXmlWarnings(result.error, 'bad');
       setStatus('XML invalid');
       return;
     }
-    xmlOutput.value = result.value;
-    xmlWarnings.innerHTML = '<li class="good">XML formatted successfully.</li>';
-    xmlStats.innerHTML = '<span class="pill good">Formatted</span>';
+    els.xmlOutput.value = result.value;
+    els.xmlWarnings.innerHTML = '<li class="good">XML formatted successfully.</li>';
+    els.xmlStats.innerHTML = '<span class="pill good">Formatted</span>';
     setStatus('XML formatted');
   }
 
   async function copyXmlOutput() {
-    try {
-      await navigator.clipboard.writeText(xmlOutput.value || '');
-      setStatus('Copied');
-    } catch (e) {
-      xmlOutput.select();
-      document.execCommand('copy');
-      setStatus('Copied');
-    }
+    await copyText(els.xmlOutput, 'Copied');
   }
 
   function clearXml() {
-    xmlInput.value = '';
-    xmlOutput.value = '';
-    xmlWarnings.innerHTML = '';
-    xmlStats.innerHTML = '';
+    els.xmlInput.value = '';
+    els.xmlOutput.value = '';
+    els.xmlWarnings.innerHTML = '';
+    els.xmlStats.innerHTML = '';
     setStatus('XML cleared');
   }
 
@@ -629,26 +682,29 @@
   document.getElementById('btnClearXml').addEventListener('click', clearXml);
 
   async function fetchAndFormatMetadataUrl() {
-    const url = metadataUrlInput.value.trim();
-    const proxyBase = (proxyEndpointInput.value || '/.netlify/functions/fetch-metadata?url=').trim();
+    const url = els.metadataUrlInput.value.trim();
+    // Using Render backend proxy (replace YOUR-RENDER-URL)
+    const proxyBase = 'https://YOUR-RENDER-URL.onrender.com/fetch-metadata?url=';
     if (!url) {
-      urlWarnings.innerHTML = '<li class="warn">Paste a metadata URL first.</li>';
-      urlStats.innerHTML = '<span class="pill warn">Empty URL</span>';
-      urlXmlOutput.value = '';
+      els.urlWarnings.innerHTML = '<li class="warn">Paste a metadata URL first.</li>';
+      els.urlStats.innerHTML = '<span class="pill warn">Empty URL</span>';
+      els.urlXmlOutput.value = '';
       setStatus('URL empty');
       return;
     }
-    try { new URL(url); } catch {
-      urlWarnings.innerHTML = '<li class="bad">Invalid URL format.</li>';
-      urlStats.innerHTML = '<span class="pill bad">Invalid URL</span>';
-      urlXmlOutput.value = '';
+    try {
+      new URL(url);
+    } catch {
+      els.urlWarnings.innerHTML = '<li class="bad">Invalid URL format.</li>';
+      els.urlStats.innerHTML = '<span class="pill bad">Invalid URL</span>';
+      els.urlXmlOutput.value = '';
       setStatus('Bad URL');
       return;
     }
 
-    urlWarnings.innerHTML = '<li class="warn">Fetching XML through the Netlify Function endpoint.</li>';
-    urlStats.innerHTML = '<span class="pill warn">Fetching...</span>';
-    urlXmlOutput.value = '';
+    els.urlWarnings.innerHTML = '<li class="warn">Fetching XML through the Netlify Function endpoint.</li>';
+    els.urlStats.innerHTML = '<span class="pill warn">Fetching...</span>';
+    els.urlXmlOutput.value = '';
 
     try {
       const proxyUrl = `${proxyBase}${encodeURIComponent(url)}`;
@@ -657,39 +713,32 @@
       const xmlText = await res.text();
       const result = parseXmlToIndentedString(xmlText);
       if (!result.ok) {
-        urlWarnings.innerHTML = `<li class="bad">${escapeHtml(result.error)}</li>`;
-        urlStats.innerHTML = '<span class="pill bad">Invalid XML</span>';
+        els.urlWarnings.innerHTML = `<li class="bad">${escapeHtml(result.error)}</li>`;
+        els.urlStats.innerHTML = '<span class="pill bad">Invalid XML</span>';
         setStatus('XML invalid');
         return;
       }
-      urlXmlOutput.value = result.value;
-      urlWarnings.innerHTML = '<li class="good">Metadata fetched and formatted successfully.</li>';
-      urlStats.innerHTML = '<span class="pill good">Fetched</span>';
+      els.urlXmlOutput.value = result.value;
+      els.urlWarnings.innerHTML = '<li class="good">Metadata fetched and formatted successfully.</li>';
+      els.urlStats.innerHTML = '<span class="pill good">Fetched</span>';
       setStatus('Fetched');
     } catch (err) {
       const msg = err && err.message ? err.message : 'Unable to fetch XML from the proxy endpoint.';
-      urlWarnings.innerHTML = `<li class="bad">${escapeHtml(msg)}</li>`;
-      urlStats.innerHTML = '<span class="pill bad">Fetch failed</span>';
+      els.urlWarnings.innerHTML = `<li class="bad">${escapeHtml(msg)}</li>`;
+      els.urlStats.innerHTML = '<span class="pill bad">Fetch failed</span>';
       setStatus('Fetch failed');
     }
   }
 
   async function copyUrlXml() {
-    try {
-      await navigator.clipboard.writeText(urlXmlOutput.value || '');
-      setStatus('Copied');
-    } catch (e) {
-      urlXmlOutput.select();
-      document.execCommand('copy');
-      setStatus('Copied');
-    }
+    await copyText(els.urlXmlOutput, 'Copied');
   }
 
   function clearUrlTab() {
-    metadataUrlInput.value = '';
-    urlXmlOutput.value = '';
-    urlWarnings.innerHTML = '';
-    urlStats.innerHTML = '';
+    els.metadataUrlInput.value = '';
+    els.urlXmlOutput.value = '';
+    els.urlWarnings.innerHTML = '';
+    els.urlStats.innerHTML = '';
     setStatus('URL cleared');
   }
 
@@ -698,11 +747,66 @@
   document.getElementById('btnCopyUrlXml').addEventListener('click', copyUrlXml);
   document.getElementById('btnClearUrl').addEventListener('click', clearUrlTab);
   document.getElementById('btnUseProxyDefault').addEventListener('click', () => {
-    proxyEndpointInput.value = '/.netlify/functions/fetch-metadata?url=';
+    els.proxyEndpointInput.value = '/.netlify/functions/fetch-metadata?url=';
     setStatus('Proxy reset');
   });
 
-  resetJSON();
+  function enableApp() {
+    document.body.classList.remove('locked');
+    els.loginOverlay.classList.add('hidden');
+    els.appShell.classList.remove('hidden');
+    sessionStorage.setItem(AUTH_KEY, '1');
+    setStatus('Ready');
+  }
+
+  function tryLogin() {
+    if (els.loginPassword.value.trim() === APP_PASSWORD) {
+      els.loginError.textContent = '';
+      enableApp();
+    } else {
+      els.loginError.textContent = 'Incorrect password.';
+    }
+  }
+
+  document.getElementById('btnLogin').addEventListener('click', tryLogin);
+  els.loginPassword.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') tryLogin();
+  });
+
+  function autoFormatXmlOnPaste() {
+    els.xmlInput.addEventListener('paste', () => {
+      setTimeout(() => {
+        const text = els.xmlInput.value.trim();
+        if (!text) return;
+        const result = parseXmlToIndentedString(text);
+        if (result.ok) {
+          els.xmlInput.value = result.value;
+          els.xmlWarnings.innerHTML = '<li class="good">XML auto-formatted on paste.</li>';
+          els.xmlStats.innerHTML = '<span class="pill good">Auto-formatted</span>';
+          setStatus('Auto formatted');
+        }
+      }, 0);
+    });
+  }
+
+  function runSmokeTests() {
+    console.assert(parseDetails('Tenant Name,WFM-140').result.tenantName === 'WFM-140', 'parseDetails should map Tenant Name');
+    console.assert(parseDetails('Tenant Name,WFM-140\nBadLine').malformed.length === 1, 'parseDetails should detect malformed lines');
+    console.assert(parseXmlToIndentedString('<root><a>1</a></root>').ok === true, 'XML formatter should accept valid XML');
+  }
+
+  function init() {
+    autoFormatXmlOnPaste();
+    runSmokeTests();
+    if (sessionStorage.getItem(AUTH_KEY) === '1') {
+      enableApp();
+    } else {
+      els.loginPassword.focus();
+    }
+    resetJSON();
+  }
+
+  init();
 </script>
 </body>
 </html>
