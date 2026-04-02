@@ -187,45 +187,19 @@
     font-weight: 900;
     font-size: 28px;
     letter-spacing: 2px;
-    color: #d9ff00;
-    background: linear-gradient(145deg, #0e7a64 0%, #0b5d4f 40%, #084a3e 70%, #063d33 100%);
-    border-radius: 14px;
+    color: #004d40;
+    background: linear-gradient(135deg, #b5cc18 0%, #b5cc18 50%, #c8e600 50%, #c8e600 100%);
+    border-radius: 8px;
     position: relative;
-    transform: perspective(600px) rotateY(-6deg) rotateX(4deg);
-    box-shadow:
-      0 2px 0 #0a6b58,
-      0 4px 0 #08594a,
-      0 6px 0 #06483c,
-      0 8px 0 #05382e,
-      0 12px 24px rgba(0,0,0,0.45),
-      0 20px 40px rgba(0,0,0,0.25),
-      inset 0 2px 4px rgba(255,255,255,0.12),
-      inset 0 -2px 4px rgba(0,0,0,0.3);
-    text-shadow:
-      0 1px 0 rgba(180,220,0,0.5),
-      0 2px 4px rgba(0,0,0,0.5),
-      0 0 12px rgba(217,255,0,0.3);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-top-color: rgba(255,255,255,0.15);
-    border-bottom-color: rgba(0,0,0,0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    text-shadow: none;
+    border: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     cursor: default;
   }
   .ukg-badge:hover {
-    transform: perspective(600px) rotateY(0deg) rotateX(0deg) translateY(-2px);
-    box-shadow:
-      0 2px 0 #0a6b58,
-      0 4px 0 #08594a,
-      0 6px 0 #06483c,
-      0 8px 0 #05382e,
-      0 14px 28px rgba(0,0,0,0.5),
-      0 24px 48px rgba(0,0,0,0.3),
-      inset 0 2px 4px rgba(255,255,255,0.15),
-      inset 0 -2px 4px rgba(0,0,0,0.3);
-    text-shadow:
-      0 1px 0 rgba(180,220,0,0.5),
-      0 2px 4px rgba(0,0,0,0.5),
-      0 0 18px rgba(217,255,0,0.45);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.4);
   }
   .url-input-row {
     display: grid;
