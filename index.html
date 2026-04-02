@@ -1,0 +1,487 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.5">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1">&lt;meta charset="UTF-8" /&gt;</p>
+<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;</p>
+<p class="p1">&lt;title&gt;3 Panel JSON Filler&lt;/title&gt;</p>
+<p class="p1">&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>:root {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--bg: #0b1220;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--panel: #111a2e;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--panel2: #0d1627;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--border: #22314f;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--text: #e7eefc;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--muted: #95a3c7;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--accent: #7c9cff;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--good: #56d6a3;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--warn: #ffce6a;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>--bad: #ff7b7b;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>* { box-sizing: border-box; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>body {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin: 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-family: Arial, sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: radial-gradient(circle at top, #13213d 0%, var(--bg) 52%, #050914 100%);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: var(--text);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>h1 { margin: 0 0 6px; font-size: 28px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>p { margin: 0 0 16px; color: var(--muted); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.toolbar {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>gap: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>flex-wrap: wrap;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin-bottom: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>button {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border: 1px solid var(--border);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: var(--text);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: rgba(255,255,255,0.05);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding: 10px 14px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-weight: 700;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>button.primary { background: linear-gradient(180deg, rgba(124,156,255,.25), rgba(124,156,255,.12)); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>button.good { background: linear-gradient(180deg, rgba(86,214,163,.23), rgba(86,214,163,.10)); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>button.danger { background: linear-gradient(180deg, rgba(255,123,123,.20), rgba(255,123,123,.08)); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.status { margin-left: auto; color: var(--good); font-size: 12px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.container { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.card {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: rgba(17,26,46,0.92);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border: 1px solid var(--border);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 16px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>overflow: hidden;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>box-shadow: 0 10px 30px rgba(0,0,0,.25);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.card h3 {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin: 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding: 14px 16px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size: 15px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-bottom: 1px solid var(--border);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: rgba(255,255,255,0.03);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.content { padding: 14px 16px 16px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>textarea {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>height: 520px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>resize: vertical;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border: 1px solid var(--border);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: var(--panel2);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: var(--text);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size: 13px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>line-height: 1.5;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>outline: none;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>white-space: pre;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>textarea:focus {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-color: var(--accent);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>box-shadow: 0 0 0 3px rgba(124,156,255,.12);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.note {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: var(--muted);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin-top: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>line-height: 1.5;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.box {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border: 1px solid var(--border);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: rgba(255,255,255,0.03);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin-top: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.box h4 {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin: 0 0 8px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size: 13px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: var(--text);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.list {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin: 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding-left: 18px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: var(--muted);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>line-height: 1.6;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.list li.warn { color: var(--warn); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.list li.bad { color: var(--bad); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.list li.good { color: var(--good); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.stats {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>gap: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>flex-wrap: wrap;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>margin-top: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.pill {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border: 1px solid var(--border);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 999px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>padding: 6px 10px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: var(--muted);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>background: rgba(255,255,255,0.03);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.pill.good { color: var(--good); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.pill.warn { color: var(--warn); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.pill.bad { color: var(--bad); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>.split { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>label.switch {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>display: inline-flex;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>gap: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>font-size: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>color: var(--muted);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>user-select: none;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>input[type="checkbox"] { transform: scale(1.1); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>@media (max-width: 1200px) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.container { grid-template-columns: 1fr; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>textarea { height: 380px; }</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.status { margin-left: 0; }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1">&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;h1&gt;JSON Auto Fill Tool&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;p&gt;Left me JSON template, middle me &lt;b&gt;Label,Value&lt;/b&gt; details, right me populated JSON. Extra labels warn karenge, lekin output me extra fields add nahi honge.&lt;/p&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="toolbar"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="primary" id="btnFill"&gt;Fill JSON&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="good" id="btnCopy"&gt;Copy Output&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button id="btnLoadExample"&gt;Load Example&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="danger" id="btnReset"&gt;Reset&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;span class="status" id="status"&gt;Ready&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;h3&gt;1. JSON Template&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;textarea id="jsonInput" spellcheck="false"&gt;{</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"integrationName":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"companyName":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"tenantName":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"tenantShortName":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"tenantUUID":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"sourceTenant":"r9-b1-mv-rollout-2",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"serviceAccountUser":"UKGTimeAdmin",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"serviceAccountPwd":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"appApiKey":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"oAuthClientId":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"oAuthClientSecret":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"apiGateWayURL":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"vanityURL":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"sftpUsernameInternal":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"sftpPasswordInternal":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"sftpUsernameExternal":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"sftpPasswordExternal":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"sftpVanityURL":"sftp.cfn02.cfn.mykronos.com",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"relayStateURL":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"webMetadataURL":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"mobileSSORelayStateURL":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"mobileSSOMetadataURL":""</p>
+<p class="p1">}&lt;/textarea&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="note"&gt;Output me sirf isi template ke fields fill honge. Koi extra key add nahi hogi.&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;h3&gt;2. Details (Label,Value)&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="split"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;label class="switch"&gt;&lt;input type="checkbox" id="keepCompanySameAsTenant" checked /&gt; Company Name = Tenant Name&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;textarea id="detailsInput" spellcheck="false"&gt;Customer Name,Internal-Presales-B9</p>
+<p class="p1">Tenant Name,WFM-140</p>
+<p class="p1">Tenant Short Name,WFM_nonprd_175</p>
+<p class="p1">Vanity URL,https://WFM-140.cfn.mykronos.com</p>
+<p class="p1">Source Tenant,https://r9-b9-mv-rollout-1.cfn.mykronos.com</p>
+<p class="p1">Oauth ID/Client ID,OXYStQsQ7P7qds1lqUkMVcqASz7r1WeX</p>
+<p class="p1">Oauth Secret,hpDiSIV9CcGEwuC6</p>
+<p class="p1">SFTP Username Internal - 1,cfn-1158816865-int</p>
+<p class="p1">SFTP Password Internal - 1,gY6*bux7:QdoqohQNmJ&gt;</p>
+<p class="p1">SFTP Username External - 1,cfn-1158816865-ext</p>
+<p class="p1">SFTP Password External - 1,pO7@#_&amp;.c8zg&gt;s@;u(K[</p>
+<p class="p1">SFTP Vanity URL,https://sftp.cfn.mykronos.com&lt;/textarea&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="box"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h4&gt;Validation / Warnings&lt;/h4&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;ul class="list" id="warnings"&gt;&lt;/ul&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;div class="stats" id="stats"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="note"&gt;Format: &lt;b&gt;Label,Value&lt;/b&gt;. Unknown labels warning me dikhengi, output ko break nahi karengi.&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;h3&gt;3. Output JSON&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;textarea id="output" spellcheck="false"&gt;&lt;/textarea&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="note"&gt;Fill button dabane ke baad yaha JSON double quotes ke saath populate hoga.&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const labelToKey = {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"Customer Name": "companyName",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"Tenant Name": "tenantName",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"Tenant Short Name": "tenantShortName",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"Vanity URL": "vanityURL",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"Source Tenant": "sourceTenant",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"Oauth ID/Client ID": "oAuthClientId",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"Oauth Secret": "oAuthClientSecret",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"SFTP Username Internal - 1": "sftpUsernameInternal",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"SFTP Password Internal - 1": "sftpPasswordInternal",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"SFTP Username External - 1": "sftpUsernameExternal",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"SFTP Password External - 1": "sftpPasswordExternal",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"SFTP Vanity URL": "sftpVanityURL",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"SSO Vanity URL": "relayStateURL",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>"SSO Metadata URL": "webMetadataURL"</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const defaults = {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>sourceTenant: "r9-b1-mv-rollout-2",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>serviceAccountUser: "UKGTimeAdmin",</p>
+<p class="p1"><span class="Apple-converted-space">    </span>sftpVanityURL: "sftp.cfn02.cfn.mykronos.com"</p>
+<p class="p1"><span class="Apple-converted-space">  </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>const jsonInput = document.getElementById('jsonInput');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const detailsInput = document.getElementById('detailsInput');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const output = document.getElementById('output');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const status = document.getElementById('status');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const warningsEl = document.getElementById('warnings');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const statsEl = document.getElementById('stats');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const keepCompanySameAsTenant = document.getElementById('keepCompanySameAsTenant');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function setStatus(text) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>status.textContent = text;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>clearTimeout(window.__statusTimer);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>window.__statusTimer = setTimeout(() =&gt; status.textContent = 'Ready', 1600);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function parseDetails(text) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const result = {};</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const parsed = [];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const unknown = [];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const malformed = [];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>text.split(/\r?\n/).forEach((line, idx) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const trimmed = line.trim();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!trimmed) return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const sep = trimmed.indexOf(',');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (sep === -1) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>malformed.push({ line: idx + 1, text: trimmed });</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const label = trimmed.slice(0, sep).trim();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const value = trimmed.slice(sep + 1).trim();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const key = labelToKey[label];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>parsed.push({ label, key: key || null, value });</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (!key) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>unknown.push({ line: idx + 1, label, value });</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>result[key] = value;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return { result, parsed, unknown, malformed };</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function fillMissingRules(data) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const out = { ...data };</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>out.integrationName = ""; // always blank</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// company = tenant</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (keepCompanySameAsTenant.checked) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>out.companyName = out.tenantName || out.companyName || "";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// NEW RULE: apiGatewayURL = vanityURL</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (out.vanityURL) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>out.apiGateWayURL = out.vanityURL;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!out.sourceTenant) out.sourceTenant = defaults.sourceTenant;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!out.serviceAccountUser) out.serviceAccountUser = defaults.serviceAccountUser;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!out.sftpVanityURL) out.sftpVanityURL = defaults.sftpVanityURL;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>return out;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function renderWarnings(info, templateKeys, merged) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>warningsEl.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>statsEl.innerHTML = '';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const missing = templateKeys.filter(k =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const val = merged[k];</p>
+<p class="p1"><span class="Apple-converted-space">      </span>return val === undefined || val === null || val === '';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const items = [];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (info.malformed.length) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>info.malformed.forEach(item =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>items.push(`&lt;li class="bad"&gt;Line ${item.line}: invalid format (use Label,Value) → ${escapeHtml(item.text)}&lt;/li&gt;`);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (info.unknown.length) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>info.unknown.forEach(item =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>items.push(`&lt;li class="warn"&gt;Line ${item.line}: unknown label ignored → ${escapeHtml(item.label)}&lt;/li&gt;`);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (missing.length) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>missing.forEach(key =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>items.push(`&lt;li class="warn"&gt;Missing value for template field → ${escapeHtml(key)}&lt;/li&gt;`);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (!items.length) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>items.push('&lt;li class="good"&gt;No warnings. Mapping looks good.&lt;/li&gt;');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>warningsEl.innerHTML = items.join('');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>statsEl.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;span class="pill good"&gt;Mapped: ${Object.keys(info.result).length}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;span class="pill warn"&gt;Unknown labels: ${info.unknown.length}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;span class="pill bad"&gt;Malformed lines: ${info.malformed.length}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;span class="pill"&gt;Missing fields: ${missing.length}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function escapeHtml(str) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>return String(str)</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.replace(/&amp;/g, '&amp;amp;')</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.replace(/&lt;/g, '&amp;lt;')</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.replace(/&gt;/g, '&amp;gt;')</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.replace(/"/g, '&amp;quot;')</p>
+<p class="p1"><span class="Apple-converted-space">      </span>.replace(/'/g, '&amp;#39;');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function fillJSON() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const template = JSON.parse(jsonInput.value);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const templateKeys = Object.keys(template);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const parsed = parseDetails(detailsInput.value);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const merged = fillMissingRules(parsed.result);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>// Only fill keys that already exist in the template.</p>
+<p class="p1"><span class="Apple-converted-space">      </span>templateKeys.forEach(key =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (Object.prototype.hasOwnProperty.call(merged, key)) {</p>
+<p class="p1"><span class="Apple-converted-space">          </span>template[key] = merged[key];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>output.value = JSON.stringify(template, null, 2);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderWarnings(parsed, templateKeys, merged);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>setStatus('Filled');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>} catch (e) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>warningsEl.innerHTML = `&lt;li class="bad"&gt;Invalid JSON template. Please check braces/quotes.&lt;/li&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>statsEl.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>alert('Invalid JSON template ya details format.');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>async function copyOutput() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>await navigator.clipboard.writeText(output.value || '');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>setStatus('Copied');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>} catch (e) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>output.select();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.execCommand('copy');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>setStatus('Copied');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function loadExample() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>detailsInput.value = `Customer Name,Internal-Presales-B9\nTenant Name,WFM-140\nTenant Short Name,WFM_nonprd_175\nVanity URL,https://WFM-140.cfn.mykronos.com\nSource Tenant,https://r9-b9-mv-rollout-1.cfn.mykronos.com\nOauth ID/Client ID,OXYStQsQ7P7qds1lqUkMVcqASz7r1WeX\nOauth Secret,hpDiSIV9CcGEwuC6\nSFTP Username Internal - 1,cfn-1158816865-int\nSFTP Password Internal - 1,gY6*bux7:QdoqohQNmJ&gt;\nSFTP Username External - 1,cfn-1158816865-ext\nSFTP Password External - 1,pO7@#_&amp;.c8zg&gt;s@;u(K[\nSFTP Vanity URL,https://sftp.cfn.mykronos.com\nUNKNOWN LABEL,should warn here`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>jsonInput.value = `{</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"integrationName":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"companyName":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"tenantName":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"tenantShortName":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"tenantUUID":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"sourceTenant":"r9-b1-mv-rollout-2",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"serviceAccountUser":"UKGTimeAdmin",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"serviceAccountPwd":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"appApiKey":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"oAuthClientId":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"oAuthClientSecret":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"apiGateWayURL":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"vanityURL":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"sftpUsernameInternal":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"sftpPasswordInternal":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"sftpUsernameExternal":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"sftpPasswordExternal":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"sftpVanityURL":"sftp.cfn02.cfn.mykronos.com",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"relayStateURL":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"webMetadataURL":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"mobileSSORelayStateURL":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"mobileSSOMetadataURL":""</p>
+<p class="p1">}`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>output.value = '';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>warningsEl.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>statsEl.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>setStatus('Example loaded');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>function resetAll() {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>jsonInput.value = `{</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"integrationName":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"companyName":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"tenantName":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"tenantShortName":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"tenantUUID":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"sourceTenant":"r9-b1-mv-rollout-2",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"serviceAccountUser":"UKGTimeAdmin",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"serviceAccountPwd":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"appApiKey":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"oAuthClientId":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"oAuthClientSecret":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"apiGateWayURL":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"vanityURL":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"sftpUsernameInternal":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"sftpPasswordInternal":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"sftpUsernameExternal":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"sftpPasswordExternal":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"sftpVanityURL":"sftp.cfn02.cfn.mykronos.com",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"relayStateURL":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"webMetadataURL":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"mobileSSORelayStateURL":"",</p>
+<p class="p1"><span class="Apple-converted-space">  </span>"mobileSSOMetadataURL":""</p>
+<p class="p1">}`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>detailsInput.value = `Customer Name,Internal-Presales-B9\nTenant Name,WFM-140\nTenant Short Name,WFM_nonprd_175\nVanity URL,https://WFM-140.cfn.mykronos.com\nSource Tenant,https://r9-b9-mv-rollout-1.cfn.mykronos.com\nOauth ID/Client ID,OXYStQsQ7P7qds1lqUkMVcqASz7r1WeX\nOauth Secret,hpDiSIV9CcGEwuC6\nSFTP Username Internal - 1,cfn-1158816865-int\nSFTP Password Internal - 1,gY6*bux7:QdoqohQNmJ&gt;\nSFTP Username External - 1,cfn-1158816865-ext\nSFTP Password External - 1,pO7@#_&amp;.c8zg&gt;s@;u(K[\nSFTP Vanity URL,https://sftp.cfn.mykronos.com`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>output.value = '';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>warningsEl.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>statsEl.innerHTML = '';</p>
+<p class="p1"><span class="Apple-converted-space">    </span>setStatus('Reset');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('btnFill').addEventListener('click', fillJSON);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('btnCopy').addEventListener('click', copyOutput);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('btnLoadExample').addEventListener('click', loadExample);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('btnReset').addEventListener('click', resetAll);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>keepCompanySameAsTenant.addEventListener('change', fillJSON);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>resetAll();</p>
+<p class="p1">&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
