@@ -373,11 +373,11 @@
             <div class="box" style="margin-top:0;">
               <h4>Proxy endpoint</h4>
               <div class="url-input-row">
-                <input id="proxyEndpointInput" type="text" value="https://YOUR-RENDER-URL.onrender.com/fetch-metadata?url=" />
+                <input id="proxyEndpointInput" type="text" value="/fetch-metadata?url=" />
                 <button class="action" id="btnUseProxyDefault">Reset</button>
               </div>
             </div>
-            <div class="note">This tab uses a same-origin proxy endpoint, so the browser does not hit CORS directly. Uses a Render backend proxy. Update the URL above with your Render service endpoint.</div>
+            <div class="note">This tab uses a same-origin proxy endpoint, so the browser does not hit CORS directly. If your frontend and backend are on the same Render service, keep this as /fetch-metadata?url=. If your backend is separate, paste its full URL here.</div>
           </div>
         </div>
         <div class="card url-card">
@@ -684,7 +684,7 @@
   async function fetchAndFormatMetadataUrl() {
     const url = els.metadataUrlInput.value.trim();
     // Using Render backend proxy (replace YOUR-RENDER-URL)
-    const proxyBase = 'https://YOUR-RENDER-URL.onrender.com/fetch-metadata?url=';
+    const proxyBase = (els.proxyEndpointInput.value || '/fetch-metadata?url=').trim();
     if (!url) {
       els.urlWarnings.innerHTML = '<li class="warn">Paste a metadata URL first.</li>';
       els.urlStats.innerHTML = '<span class="pill warn">Empty URL</span>';
@@ -747,7 +747,7 @@
   document.getElementById('btnCopyUrlXml').addEventListener('click', copyUrlXml);
   document.getElementById('btnClearUrl').addEventListener('click', clearUrlTab);
   document.getElementById('btnUseProxyDefault').addEventListener('click', () => {
-    els.proxyEndpointInput.value = '/.netlify/functions/fetch-metadata?url=';
+    els.proxyEndpointInput.value = '/fetch-metadata?url=';
     setStatus('Proxy reset');
   });
 
@@ -793,6 +793,7 @@
     console.assert(parseDetails('Tenant Name,WFM-140').result.tenantName === 'WFM-140', 'parseDetails should map Tenant Name');
     console.assert(parseDetails('Tenant Name,WFM-140\nBadLine').malformed.length === 1, 'parseDetails should detect malformed lines');
     console.assert(parseXmlToIndentedString('<root><a>1</a></root>').ok === true, 'XML formatter should accept valid XML');
+    console.assert((() => { const v = (els.proxyEndpointInput.value || '/fetch-metadata?url=').trim(); return v === '/fetch-metadata?url='; })(), 'Proxy endpoint default should be relative');
   }
 
   function init() {
