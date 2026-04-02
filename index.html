@@ -40,16 +40,29 @@
   .tabs { display: flex; gap: 10px; flex-wrap: wrap; }
   .tab-btn {
     border: 1px solid var(--border);
-    color: var(--text);
-    background: rgba(255,255,255,0.05);
+    color: var(--muted);
+    background: rgba(255,255,255,0.03);
     border-radius: 999px;
-    padding: 10px 16px;
+    padding: 10px 20px;
     cursor: pointer;
-    font-weight: 700;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.3px;
+    transition: all 0.2s ease;
   }
-  .tab-btn.active.tab-json { background: linear-gradient(180deg, rgba(124,156,255,.28), rgba(124,156,255,.12)); }
-  .tab-btn.active.tab-xml { background: linear-gradient(180deg, rgba(86,214,163,.28), rgba(86,214,163,.12)); }
-  .tab-btn.active.tab-url { background: linear-gradient(180deg, rgba(255,206,106,.30), rgba(255,206,106,.12)); }
+  .tab-btn:hover:not(.active) {
+    background: rgba(255,255,255,0.06);
+    color: var(--text);
+  }
+  .tab-btn.active {
+    color: var(--text);
+    border-color: rgba(148,163,199,0.35);
+    background: rgba(148,163,199,0.10);
+    box-shadow: 0 1px 8px rgba(0,0,0,0.15);
+  }
+  .tab-btn.active.tab-json { border-bottom: 2px solid var(--accent); }
+  .tab-btn.active.tab-xml { border-bottom: 2px solid var(--accent2); }
+  .tab-btn.active.tab-url { border-bottom: 2px solid var(--accent3); }
   .panel { display: none; }
   .panel.active { display: block; }
   .toolbar {
@@ -166,16 +179,53 @@
     margin-bottom: 10px;
   }
   .ukg-badge {
-    width: 90px;
-    height: 90px;
+    width: 100px;
+    height: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
-    font-size: 26px;
+    font-weight: 900;
+    font-size: 28px;
+    letter-spacing: 2px;
     color: #d9ff00;
-    background: linear-gradient(135deg,#0b5d4f 50%,#0a4a40 50%);
-    border-radius: 6px;
+    background: linear-gradient(145deg, #0e7a64 0%, #0b5d4f 40%, #084a3e 70%, #063d33 100%);
+    border-radius: 14px;
+    position: relative;
+    transform: perspective(600px) rotateY(-6deg) rotateX(4deg);
+    box-shadow:
+      0 2px 0 #0a6b58,
+      0 4px 0 #08594a,
+      0 6px 0 #06483c,
+      0 8px 0 #05382e,
+      0 12px 24px rgba(0,0,0,0.45),
+      0 20px 40px rgba(0,0,0,0.25),
+      inset 0 2px 4px rgba(255,255,255,0.12),
+      inset 0 -2px 4px rgba(0,0,0,0.3);
+    text-shadow:
+      0 1px 0 rgba(180,220,0,0.5),
+      0 2px 4px rgba(0,0,0,0.5),
+      0 0 12px rgba(217,255,0,0.3);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-top-color: rgba(255,255,255,0.15);
+    border-bottom-color: rgba(0,0,0,0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: default;
+  }
+  .ukg-badge:hover {
+    transform: perspective(600px) rotateY(0deg) rotateX(0deg) translateY(-2px);
+    box-shadow:
+      0 2px 0 #0a6b58,
+      0 4px 0 #08594a,
+      0 6px 0 #06483c,
+      0 8px 0 #05382e,
+      0 14px 28px rgba(0,0,0,0.5),
+      0 24px 48px rgba(0,0,0,0.3),
+      inset 0 2px 4px rgba(255,255,255,0.15),
+      inset 0 -2px 4px rgba(0,0,0,0.3);
+    text-shadow:
+      0 1px 0 rgba(180,220,0,0.5),
+      0 2px 4px rgba(0,0,0,0.5),
+      0 0 18px rgba(217,255,0,0.45);
   }
   .url-input-row {
     display: grid;
@@ -248,9 +298,8 @@
         <div class="card json-card">
           <h3>2. Details (Label,Value)</h3>
           <div class="content">
-            <div class="split">
-              <label class="switch"><input type="checkbox" id="keepCompanySameAsTenant" checked /> Company Name = Tenant Name</label>
-            </div>
+            <!-- Company Name = Tenant Name logic kept in backend -->
+            <input type="checkbox" id="keepCompanySameAsTenant" checked style="display:none;" />
             <textarea id="detailsInput" spellcheck="false" placeholder="Paste details here in Label,Value format...\nExample:\nCustomer Name,Internal-Presales-B9\nTenant Name,WFM-140\nSSO Vanity URL,https://WFM-140-SSO.cfn.mykronos.com"></textarea>
             <div class="box">
               <h4>Validation / Warnings</h4>
